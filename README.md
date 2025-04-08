@@ -65,7 +65,7 @@ tritonserver --model-repository=model_repository --model-config-name=onnx
 
 ## Retrieve Prometheus metrics
 
-While the inference server is mounted and running, run the following command on a different bash instance in the host device:
+While the inference server is mounted and running, run the following command in a different bash instance on the host device:
 
 ```bash
 curl -v localhost:8002/metrics
@@ -96,8 +96,8 @@ docker run -it --gpus all \
 Perform model analysis:
 
 ```bash
-./utils/apply_patches.sh
-mkdir -p .profile/yolo
+bash ./utils/apply_patches.sh
+mkdir -p ./profile/yolo
 
 TRITON_VER=25.03
 

@@ -1,0 +1,2 @@
+cp ./patches/gpu_device_factory.py /usr/local/lib/python3.12/dist-packages/model_analyzer/device/gpu_device_factory.py
+cp ./patches/dcgm_structs.py /usr/local/lib/python3.12/dist-packages/model_analyzer/monitor/dcgm/dcgm_structs.py

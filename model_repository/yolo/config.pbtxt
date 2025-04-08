@@ -1,43 +1,28 @@
 name: "yolo"
-platform: "tensorrt_plan"
-version_policy {
-  latest {
-    num_versions: 1
-  }
-}
-max_batch_size: 8
-input {
-  name: "input"
-  data_type: TYPE_FP32
-  dims: 3
-  dims: 1024
-  dims: 1024
-}
-output {
-  name: "output"
-  data_type: TYPE_FP32
-  #dims: 16
-  dims: 21504
-  dims: 6
-}
-instance_group {
-  count: 1
-  kind: KIND_GPU
-}
-default_model_filename: "model.plan"
-dynamic_batching {
-  preferred_batch_size: 1
-  preferred_batch_size: 2
-  preferred_batch_size: 4
-  preferred_batch_size: 8
-  max_queue_delay_microseconds: 500
-}
+version_policy: { specific: { versions: [1]}}
+
+# (Optional) Enable TensorRT for GPU inference
+# First run will be slow due to TensorRT engine conversion
 optimization {
-  input_pinned_memory {
-    enable: true
-  }
-  output_pinned_memory {
-    enable: true
+  execution_accelerators {
+    gpu_execution_accelerator {
+      name: "tensorrt"
+      parameters {
+        key: "precision_mode"
+        value: "FP16"
+      }
+      parameters {
+        key: "max_workspace_size_bytes"
+        value: "3221225472"
+      }
+      parameters {
+        key: "trt_engine_cache_enable"
+        value: "1"
+      }
+      parameters {
+        key: "trt_engine_cache_path"
+        value: "model_repository/yolo/1"
+      }
+    }
   }
 }
-backend: "tensorrt"

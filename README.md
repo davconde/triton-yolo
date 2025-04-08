@@ -62,3 +62,51 @@ tritonserver --model-repository=model_repository --model-config-name=tensorrt
 # Use the ONNX runtime (it will take time to warmup after first client connection)
 tritonserver --model-repository=model_repository --model-config-name=onnx
 ```
+
+## Retrieve Prometheus metrics
+
+While the inference server is mounted and running, run the following command on a different bash instance in the host device:
+
+```bash
+curl -v localhost:8002/metrics
+```
+
+## Perform model analysis
+
+To assess the performance of a determined model repository, pull the following Docker image:
+
+```bash
+TRITON_VER=25.03
+
+docker pull nvcr.io/nvidia/tritonserver:${TRITON_VER}-py3-sdk
+```
+
+From a console on this repository as its working directory, launch the container with:
+
+```bash
+TRITON_VER=25.03
+
+docker run -it --gpus all \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v $(pwd):$(pwd) \
+      -w $(pwd) \
+      --net=host nvcr.io/nvidia/tritonserver:${TRITON_VER}-py3-sdk
+```
+
+Perform model analysis:
+
+```bash
+./utils/apply_patches.sh
+mkdir -p .profile/yolo
+
+TRITON_VER=25.03
+
+model-analyzer profile \
+    --model-repository ./model_repository \
+    --profile-models yolo \
+    --triton-launch-mode docker \
+    --output-model-repository-path ./profile/yolo \
+    --export-path profile_results \
+    --override-output-model-repository \
+    --triton-docker-image nvcr.io/nvidia/tritonserver:${TRITON_VER}-py3
+```
